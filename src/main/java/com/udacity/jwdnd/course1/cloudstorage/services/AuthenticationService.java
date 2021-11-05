@@ -32,8 +32,7 @@ public class AuthenticationService implements AuthenticationProvider {
             SecureRandom random = new SecureRandom();
             byte[] key = new byte[16];
             random.nextBytes(key);
-            String encodedKey = Base64.getEncoder().encodeToString(key);
-            String encryptedPassword = encryptionService.encryptValue(password, encodedKey);
+            String encryptedPassword = encryptionService.encryptValue(password, user.getSalt());
             if(user.getPassword().equals(encryptedPassword)) {
                 return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
             }
