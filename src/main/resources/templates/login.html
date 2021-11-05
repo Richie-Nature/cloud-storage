@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
         <title>Login</title>
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container justify-content-center w-25 p-3" style="background-color: #eeeeee; margin-top: 5em;">
             <h1 class="display-5">Login</h1>
-            <form action="#" method="POST">
+            <form action="#" th:action="@{/login}" method="POST">
                 <div class="alert alert-danger">
                     Invalid username or password
                 </div>
@@ -29,7 +28,7 @@
             </form>
 
             <div class="form-group" style="margin-top: 0.5em;">
-                <label><a>Click here to sign up</a></label>
+                <label><a th:href="@{/signup}">Click here to sign up</a></label>
             </div>
         </div>
     </body>
