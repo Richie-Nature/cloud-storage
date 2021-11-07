@@ -15,11 +15,14 @@ import java.util.Base64;
 @Service
 public class AuthenticationService implements AuthenticationProvider {
     private final EncryptionService encryptionService;
+    private final UserService userService;
     private final UserMapper userMapper;
 
-    public AuthenticationService(EncryptionService encryptionService, UserMapper userMapper) {
+    public AuthenticationService(EncryptionService encryptionService,
+                                 UserMapper userMapper, UserService userService) {
         this.encryptionService = encryptionService;
         this.userMapper = userMapper;
+        this.userService = userService;
     }
 
     @Override

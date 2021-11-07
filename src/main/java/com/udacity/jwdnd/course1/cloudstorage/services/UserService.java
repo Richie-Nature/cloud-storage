@@ -13,6 +13,7 @@ import java.util.Base64;
 public class UserService {
     private final UserMapper userMapper;
     private final EncryptionService encryptionService;
+    public User user;
 
     public UserService(UserMapper userMapper, EncryptionService encryptionService) {
         this.userMapper = userMapper;
@@ -40,5 +41,9 @@ public class UserService {
 
     public Authentication currentUser() {
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public void setCurrentUser() {
+        this.user = getUser(currentUser().getName());
     }
 }
