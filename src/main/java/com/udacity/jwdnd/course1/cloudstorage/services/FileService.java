@@ -21,15 +21,15 @@ public class FileService {
     }
 
     public int createFile(MultipartFile file) {
+        int userId = userService.getUser(userService.currentUser().getName()).getUserid();
         try {
             if(file.isEmpty()) {
-                throw new StorageException("Empty file provided. Upload aborted");
+                throw new StorageException("Please choose a file to upload");
             }
-            if(getFile(file.getOriginalFilename()) != null) {
+            if(getFile(file.getOriginalFilename(), userId) != null) {
                 throw new StorageException("File already exists!");
             } else {
                 String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-                int userId = userService.getUser(userService.currentUser().getName()).getUserid();
                 return fileMapper.insert(new File(null, fileName, file.getContentType(),
                         file.getSize(), userId, file.getBytes()));
             }
@@ -50,11 +50,11 @@ public class FileService {
         return fileMapper.findById(id);
     }
 
-    public File getFile(String name) {
-        return fileMapper.findByName(name);
+    public File getFile(String name, int userId) {
+        return fileMapper.findByName(name, userId);
     }
 
-    public int deleteFile(int id) {
-        return fileMapper.delete(id);
+    public int deleteFile(int id, int userId) {
+        return fileMapper.delete(id, userId);
     }
 }
