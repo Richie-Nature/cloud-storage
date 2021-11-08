@@ -43,7 +43,7 @@ public class UserService {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public void setCurrentUser() {
-        this.user = getUser(currentUser().getName());
+    public int currentUserId() {
+        return getUser(currentUser().getName()).getUserid();
     }
 }

@@ -21,7 +21,7 @@ public class FileService {
     }
 
     public int createFile(MultipartFile file) {
-        int userId = userService.getUser(userService.currentUser().getName()).getUserid();
+        int userId = userService.currentUserId();
         try {
             if(file.isEmpty()) {
                 throw new StorageException("Please choose a file to upload");
@@ -41,13 +41,12 @@ public class FileService {
 
     }
 
-    public Stream<File> getAllFiles() {
-        int userId = userService.getUser(userService.currentUser().getName()).getUserid();
+    public Stream<File> getAllFiles(int userId) {
         return fileMapper.findAll(userId).stream();
     }
 
-    public File getFile(int id) {
-        return fileMapper.findById(id);
+    public File getFile(int id, int userId) {
+        return fileMapper.findById(id, userId);
     }
 
     public File getFile(String name, int userId) {
