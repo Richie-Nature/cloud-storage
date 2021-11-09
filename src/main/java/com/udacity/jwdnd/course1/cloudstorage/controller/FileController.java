@@ -51,19 +51,27 @@ public class FileController {
     public String uploadFile(@RequestParam("fileUpload")MultipartFile file,
                              RedirectAttributes redirectAttributes) {
         try {
-            fileService.createFile(file);
+           int rows = fileService.createFile(file);
+           if(rows > 0)
+            redirectAttributes.addFlashAttribute("success",
+                    file.getOriginalFilename()+" uploaded successfully");
         }catch (StorageException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/home";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteFile(@PathVariable("id") int fileId, RedirectAttributes redirectAttributes) {
+    @GetMapping("/delete/{id}/{name}")
+    public String deleteFile(@PathVariable("id") int fileId,
+                             @PathVariable("name") String name,
+                             RedirectAttributes redirectAttributes) {
         int userId = userService.currentUserId();
         if(fileService.deleteFile(fileId, userId) < 1) {
          redirectAttributes.addFlashAttribute("error",
                  "Could not delete file. Please try again");
+        } else {
+            redirectAttributes.addFlashAttribute("success",
+                    name + " deleted successfully!");
         }
         return "redirect:/home";
     }

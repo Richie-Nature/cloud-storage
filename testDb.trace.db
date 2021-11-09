@@ -1,0 +1,8 @@
+2021-11-09 00:16:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO NOTES (NOTETITLE, NOTEDESCRIPTION, USERID)VALUES(?, ?, ?[*]"; expected "[, ::, AT, FORMAT, *, /, %, +, -, ||, ~, !~, NOT, LIKE, ILIKE, REGEXP, IS, IN, BETWEEN, AND, OR, ,, )"; SQL statement:
+INSERT INTO NOTES (notetitle, notedescription, userid)values(?, ?, ? [42001-200]
+2021-11-09 11:56:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE NOTES SET NOTETITLE = ?, NOTEDESCRIPTION = ?,
+WHERE[*] USERID = ? AND NOTEID = ?"; expected "identifier"; SQL statement:
+UPDATE NOTES SET notetitle = ?, notedescription = ?,
+WHERE userid = ? AND noteid = ? [42001-200]

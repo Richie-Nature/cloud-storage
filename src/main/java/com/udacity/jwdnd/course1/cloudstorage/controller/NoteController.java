@@ -18,39 +18,42 @@ public class NoteController {
         this.userService = userService;
     }
 
-    @PostMapping("/add")
-    public String addNote(@ModelAttribute Note note, RedirectAttributes redirectAttributes) {
+    @PostMapping()
+    public String saveNote(@ModelAttribute Note note, RedirectAttributes redirectAttributes) {
         int userId = userService.currentUserId();
+        int rowsAdded = 0;
+        String errorMessage = null;
+        String successMessage = null;
 
-        int rowsAdded = noteService.createNote(note, userId);
+        if(note.getNoteid() != null) {
+            rowsAdded = noteService.updateNote(note, userId);
+            errorMessage = "Error updating note. Please try again";
+            successMessage = note.getNotetitle() + " updated successfully!";
+        } else {
+            rowsAdded = noteService.createNote(note, userId);
+            errorMessage = "Error adding note. Please try again";
+            successMessage = note.getNotetitle() + " added successfully!";
+        }
 
         if(rowsAdded < 1) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Failed to add note. Please try again");
+            redirectAttributes.addFlashAttribute("error",errorMessage);
+        }else {
+            redirectAttributes.addFlashAttribute("success",successMessage);
         }
         return "redirect:/home#nav-notes";
     }
 
-    @PostMapping("/edit")
-    public String editNote(@ModelAttribute Note note, RedirectAttributes redirectAttributes) {
-        int userId = userService.currentUserId();
-
-        int rowsAdded = noteService.updateNote(note, userId);
-
-        if(rowsAdded < 1) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Failed to update note. Please try again");
-        }
-        return "redirect:/home#nav-notes";
-    }
-
-    @GetMapping("/remove{id}")
+    @GetMapping("/remove/{id}/{name}")
     public String removeNote(@PathVariable("id")int id,
+                             @PathVariable("name")String name,
                              RedirectAttributes redirectAttributes) {
         int userId = userService.currentUserId();
         if(noteService.deleteNote(id, userId) < 1) {
             redirectAttributes.addFlashAttribute("error",
                     "Could not delete note. Please try again");
+        } else {
+            redirectAttributes.addFlashAttribute("success",
+                    name + " deleted successfully!");
         }
         return "redirect:/home#nav-notes";
     }

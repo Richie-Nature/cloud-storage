@@ -17,8 +17,8 @@ public class HomeController {
     private final NoteService noteService;
     private final UserService userService;
 
-    public HomeController(FileService fileService, UserService userService,
-                          NoteService noteService) {
+    public HomeController(FileService fileService, NoteService noteService,
+                          UserService userService) {
         this.fileService = fileService;
         this.userService = userService;
         this.noteService = noteService;
