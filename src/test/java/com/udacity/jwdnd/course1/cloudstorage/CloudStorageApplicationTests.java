@@ -1,9 +1,11 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -14,6 +16,10 @@ class CloudStorageApplicationTests {
 	private int port;
 
 	private WebDriver driver;
+	private String baseURL;
+
+	@Autowired
+	private UserService userService;
 
 	@BeforeAll
 	static void beforeAll() {
@@ -22,6 +28,7 @@ class CloudStorageApplicationTests {
 
 	@BeforeEach
 	public void beforeEach() {
+		this.baseURL = "http://localhost:" + this.port;
 		this.driver = new ChromeDriver();
 	}
 
@@ -34,8 +41,18 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void getLoginPage() {
-		driver.get("http://localhost:" + this.port + "/login");
+		driver.get(this.baseURL + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testUnauthorizedAccess() {
+		String[] urls = {"home", "files", "credentials", "notes"};
+		for (String url: urls) {
+			driver.get(this.baseURL + "/"+ url); //wondering how I could use a wild card instead
+			Assertions.assertEquals("Login", driver.getTitle());
+		}
+
 	}
 
 }
