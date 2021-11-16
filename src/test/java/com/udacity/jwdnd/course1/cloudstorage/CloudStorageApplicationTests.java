@@ -1,5 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.pojo.HomePage;
+import com.udacity.jwdnd.course1.cloudstorage.pojo.LoginPage;
+import com.udacity.jwdnd.course1.cloudstorage.pojo.SignupPage;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -40,19 +43,43 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void getLoginPage() {
+	void getLoginPage() {
 		driver.get(this.baseURL + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
 	@Test
-	public void testUnauthorizedAccess() {
+	void testUnauthorizedAccess() {
 		String[] urls = {"home", "files", "credentials", "notes"};
 		for (String url: urls) {
 			driver.get(this.baseURL + "/"+ url); //wondering how I could use a wild card instead
 			Assertions.assertEquals("Login", driver.getTitle());
 		}
 
+	}
+
+	@Test
+	void testAuthentication() {
+		String firstname = "Selenium";
+		String lastname = "Test";
+		String username = "jasetest";
+		String password = "password";
+
+		driver.get(baseURL+"/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.signup(firstname, lastname, username, password);
+
+		driver.get(baseURL + "/login");
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
+
+		//check that user has been redirected to home
+		Assertions.assertEquals("Home", driver.getTitle());
+
+		//check that user is redirected to login page on logout
+		HomePage homePage = new HomePage(driver);
+		homePage.logout();
+		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
 }
