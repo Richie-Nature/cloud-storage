@@ -80,7 +80,7 @@
 
                     <!--         NOTES             -->
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                        <button style="margin: 0.25em;" type="button" id="note-modal-btn" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
 
@@ -94,9 +94,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="note: ${notes}">
+                                    <tr th:each="note: ${notes}" id="note-row">
                                         <td>
-                                            <button type="button" class="btn btn-success"
+                                            <button type="button" class="btn btn-success note-edit-btn"
                                                     th:data-noteId="${note.noteid}"
                                                     th:data-noteTitle="${note.notetitle}"
                                                     th:data-noteDescription="${note.notedescription}"
@@ -106,11 +106,12 @@
                                                     this.getAttribute('data-noteDescription')
                                                     )"
                                             >Edit</button>
-                                            <a class="btn btn-danger" th:href="@{/notes/remove/{id}/{name}
+                                            <a class="btn btn-danger note-del-btn" th:href="@{/notes/remove/{id}/{name}
                                             (id = ${note.noteid}, name = ${note.notetitle})}">Delete</a>
                                         </td>
-                                        <th scope="row" th:text="${note.notetitle}"></th>
-                                        <td th:text="${note.notedescription.substring(0, 50)+'...'}"></td>
+                                        <th scope="row" class="d-note-title" th:text="${note.notetitle}"></th>
+                                        <td class="d-note-desc" th:if="${note.notedescription.length >= 50}" th:text="${note.notedescription.substring(0, 50)+'...'}"></td>
+                                        <td class="d-note-desc" th:if="${note.notedescription.length < 50}" th:text="${note.notedescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -141,7 +142,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button type="button" id="save-btn" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
