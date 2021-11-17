@@ -1,18 +1,22 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import com.udacity.jwdnd.course1.cloudstorage.pojo.HomePage;
-import com.udacity.jwdnd.course1.cloudstorage.pojo.LoginPage;
-import com.udacity.jwdnd.course1.cloudstorage.pojo.NotePoj;
-import com.udacity.jwdnd.course1.cloudstorage.pojo.SignupPage;
+import com.udacity.jwdnd.course1.cloudstorage.entity.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.pojo.*;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = {"classpath:drop_all.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -33,6 +37,9 @@ class CloudStorageApplicationTests {
 	private SignupPage signupPage;
 	private LoginPage loginPage;
 	private HomePage homePage;
+
+	@Autowired
+	private CredentialService credentialService;
 
 	@Autowired
 	private UserService userService;
@@ -175,6 +182,80 @@ class CloudStorageApplicationTests {
     	//check that note no longer exists
 		Assertions.assertFalse(notePoj1.isNoteTableDataExists());
 
+	}
+
+	/**
+	 * Test that credentials are created, verify that they are displayed,
+	 * and verify password encryption
+	 */
+	@Test
+	public void testCredentialCreationAndVisibilityAndEncryption() {
+		signUpAndLogin();
+		CredentialPoj credentialPoj = new CredentialPoj(driver);
+
+		//create credential
+		String url = "www.amazon.com";
+		String username = "myUsername";
+		String password = "password";
+
+		credentialPoj.addCredential(url, username, password);
+
+		driver.get(baseURL + "/home");
+
+		//check that credential is created
+		CredentialPoj credentialPoj1 = new CredentialPoj(driver);
+
+		credentialPoj1.openTab();
+		Credential savedCredential = credentialPoj.getCredential(this.username,
+				credentialPoj1.getCredentialId(), userService, credentialService);
+
+		Assertions.assertEquals(true, credentialPoj1.isCredTableDataExists());
+		Assertions.assertEquals(url, credentialPoj1.getCredUrl().getText());
+		Assertions.assertEquals(username, credentialPoj1.getCredUname().getText());
+		Assertions.assertEquals(savedCredential.getPassword(),
+				credentialPoj1.getCredPass().getText());
+	}
+
+	@Test
+	public void testCredentialEditAndVisiblityAndDecryption() throws InterruptedException {
+		signUpAndLogin();
+		CredentialPoj credentialPoj = new CredentialPoj(driver);
+
+		//create credential
+		String url = "www.amazon.com";
+		String username = "myUsername";
+		String password = "password";
+
+		credentialPoj.addCredential(url, username, password);
+
+		driver.get(baseURL + "/home");
+		credentialPoj.openEditModal();
+
+		CredentialPoj credentialPoj1 = new CredentialPoj(driver);
+
+		//Check that password is unencrypted
+		Assertions.assertEquals(password, credentialPoj1.getCredPassField().getAttribute("value"));//can't use get text since not prefilled by selenium
+
+		//edit the credential
+		String newUrl = "www.amazon.com/aws";
+		String newUsername = "anotherUsername";
+		String newPassword = "extraJuice";
+		credentialPoj1.editCredential(newUrl, newUsername, newPassword);
+
+		//navigate to home page
+		driver.get(baseURL + "/home");
+
+		//verify note update
+		CredentialPoj credentialPoj2 = new CredentialPoj(driver);
+		credentialPoj2.openTab();
+
+		Credential savedCredential = credentialPoj.getCredential(this.username,
+				credentialPoj2.getCredentialId(), userService, credentialService);
+
+		Assertions.assertEquals(newUrl, credentialPoj2.getCredUrl().getText());
+		Assertions.assertEquals(newUsername, credentialPoj2.getCredUname().getText());
+		Assertions.assertEquals(savedCredential.getPassword(),
+				credentialPoj1.getCredPass().getText());
 	}
 
 	private void signUpAndLogin() {

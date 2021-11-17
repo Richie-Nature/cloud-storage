@@ -33,8 +33,8 @@ public class CredentialService {
         return credentialMapper.findAll(userId).stream();
     }
 
-    public Credential getCredential(int noteId, int userId) {
-        return credentialMapper.findById(noteId, userId);
+    public Credential getCredential(int id, int userId) {
+        return credentialMapper.findById(id, userId);
     }
 
     public int updateCredential(Credential credential, int userId) {
