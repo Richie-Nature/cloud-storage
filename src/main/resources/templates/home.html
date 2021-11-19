@@ -68,8 +68,8 @@
                                     <td>
                                         <a target="_blank" th:href="@{/files/{fname}
                                         (fname = ${file.filename})}"class="btn btn-success">View</a>
-                                        <a th:href="@{/files/delete/{id}
-                                        (id = ${file.fileId})}" class="btn btn-danger">Delete</a>
+                                        <a th:href="@{/files/delete/{id}/{name}
+                                        (id = ${file.fileId}, name = ${file.filename})}" class="btn btn-danger">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${file.filename}"></th>
                                 </tr>
